@@ -117,4 +117,113 @@ def downtop_merge_sort(nums, lo, hi):
     return nums
 
 
-print(downtop_merge_sort([1, 4, 5, 2, 3, 2], 0, 6))
+def quick_sort(a, lo, hi):
+    """
+    快速排序
+    :param a:
+    :param lo:
+    :param hi:
+    :return:
+    """
+    random.shuffle(a)
+    if hi <= lo:
+        return
+    lt = lo
+    i = lo
+    gt = hi - 1
+    v = a[lo]
+    # 三分
+    while i <= gt:
+        if a[i] < v:
+            a[lt], a[i] = a[i], a[lt]
+            lt += 1
+            i += 1
+        elif a[i] > v:
+            a[i], a[gt] = a[gt], a[i]
+            gt -= 1
+        else:
+            i += 1
+
+    quick_sort(a, lo, lt)
+    quick_sort(a, gt + 1, hi)
+    return a
+
+
+class Heap:
+    def __init__(self):
+        self.__a = [None]
+        self.__n = 0
+
+    def swim(self, k):
+        while k > 1 and self.__a[k // 2] < self.__a[k]:
+            self.__a[k // 2], self.__a[k] = self.__a[k], self.__a[k // 2]
+            k //= 2
+
+    def sink(self, k):
+        while 2 * k <= self.__n:
+            j = 2 * k
+            if j < self.__n and self.__a[j] < self.__a[j + 1]:
+                j += 1
+            if not self.__a[k] < self.__a[j]:
+                break
+            else:
+                self.__a[k], self.__a[j] = self.__a[j], self.__a[k]
+            k = j
+
+    def insert(self, item):
+        self.__a.append(item)
+        self.__n += 1
+        self.swim(self.__n)
+
+    def pop(self):
+        item = self.__a[1]
+        self.__a[1] = self.__a[-1]
+        self.__a.pop()
+        self.__n -= 1
+        self.sink(1)
+        return item
+
+
+def swim(a, k):
+    while k > 1 and a[k // 2] < a[k]:
+        a[k // 2], a[k] = a[k], a[k // 2]
+        k //= 2
+
+
+def sink(a, k, n):
+    while 2 * k <= n:
+        j = 2 * k
+        if j < n and a[j] < a[j + 1]:
+            j += 1
+        if not a[k] < a[j]:
+            break
+        else:
+            a[k], a[j] = a[j], a[k]
+        k = j
+
+
+def heap_sort(a):
+    n = len(a)
+    a.insert(0, None)
+    k = n // 2
+    while k >= 1:
+        sink(a, k, n)
+        k -= 1
+
+    while n > 1:
+        a[n], a[1] = a[1], a[n]
+        n -= 1
+        sink(a, 1, n)
+
+    return a[1:]
+
+
+import random
+
+heap = Heap()
+
+nums = []
+for i in range(10):
+    nums.append(random.randint(0, 100))
+
+print(heap_sort(nums))
