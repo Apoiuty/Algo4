@@ -10,27 +10,25 @@ def BM_search(s, p):
     for i, letter in enumerate(p):
         bad_letter[letter] = i
 
-    good_suffix = dict()
-    len_p = len(p)
-    cnt = 0
-    while p[cnt] == p[len_p - cnt - 1]:
-        cnt += 1
-    for i in range(len_p - 1, -1, -1):
-        if i == len_p - 1:
-            good_suffix[i] = -1
-        else:
-            pass
-    i = j = len_p - 1
-    while j >= 0 and i < len(s):
-        if s[i] == p[j]:
-            i -= 1
+    i = 0
+    j = len(p) - 1
+    while j >= 0 and i <= len(s) - len(p):
+        if p[j] == s[i + j]:
             j -= 1
         else:
-            i += len_p - 1 - j + max(good_suffix[j], j - bad_letter[j])
-            j = len_p - 1
+            if s[i + j] not in bad_letter:
+                i += j + 1
+            else:
+                if j - bad_letter[s[i + j]] <= 0:
+                    i += j - bad_letter[s[i + j]] + 1
+                else:
+                    i += j - bad_letter[s[i + j]]
+            j = len(p) - 1
 
-        if j == 0:
+        if j == -1:
             return i
+
+    return -1
 
 
 def KMP(s, p):
@@ -54,4 +52,4 @@ def KMP(s, p):
         return -1
 
 
-print(KMP('123456', '90'))
+print(BM_search('123456', '5600'))
