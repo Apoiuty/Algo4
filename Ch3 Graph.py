@@ -1,4 +1,5 @@
 import heapq
+import math
 from copy import deepcopy
 from functools import total_ordering
 
@@ -170,6 +171,61 @@ class WeightedGraph:
             mst.add_edge(edge)
 
         return mst
+
+
+class Digraph:
+    def __init__(self):
+        from collections import defaultdict
+        # 每个顶点的连接的顶点
+        self.adj = defaultdict(list)
+        self.edge = []
+
+    def add_edge(self, e):
+        self.adj[e.start].append(e)
+        self.edge.append(e)
+
+    def E(self):
+        return len(self.edge)
+
+    def V(self):
+        return len(self.adj)
+
+    def Bellman_Ford(self, start):
+        from collections import deque, defaultdict
+        pq = deque()
+        pq.append(start)
+        in_pq = set()
+        in_pq.add(start)
+        cnt = 0
+        n = self.V()
+        distTo = defaultdict(lambda: math.inf)
+        distTo[start] = 0
+        edgeTo = dict()
+
+        while pq:
+            v = pq.popleft()
+            in_pq.discard(v)
+            for e in self.adj[v]:
+                end = e.end
+                distTo[end] = min(distTo[end], distTo[v] + e.weight)
+                edgeTo[end] = e
+                if e not in in_pq:
+                    pq.append(end)
+                    in_pq.add(end)
+                cnt += 1
+                if cnt % n == 0:
+                    if self.hash_neg_cycle(edgeTo, distTo):
+                        raise Exception(
+                            'The graph has a negative cycle.'
+                        )
+        return distTo, edgeTo
+
+    def hash_neg_cycle(self, edgeTo, distTo):
+        for edge in edgeTo:
+            if distTo[edge.start] + edge.weight < distTo[edge.end]:
+                return True
+
+        return False
 
 
 g = WeightedGraph()
