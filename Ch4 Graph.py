@@ -114,6 +114,7 @@ class WeightedGraph:
         生成最小生成树
         :return: WeightedGraph
         """
+        # 最小生成树
         mst = WeightedGraph()
         marked = set()
         v0 = self.edge[0].start
@@ -147,6 +148,7 @@ class WeightedGraph:
         return mst
 
     def Kruskal(self):
+        # todo:这个算法实现有问题
         mst = WeightedGraph()
         from collections import defaultdict
         union_set = defaultdict(lambda: None)
@@ -165,6 +167,7 @@ class WeightedGraph:
                 union_set[w] = union_set[v]
             elif union_set[w] != union_set[v]:
                 union_set[w] = union_set[v]
+                #  todo：这里有问题
             else:
                 continue
 
